@@ -1,10 +1,16 @@
 <script setup lang="ts">
-const ACTIONS = [
+interface IAction {
+  label: string
+  action: () => void
+  variant?: 'outlined' | 'text'
+  as?: string
+  link?: string
+}
+const ACTIONS: IAction[] = [
   {
     label: 'Start',
     action: () => {},
     link: '/game',
-    variant: '',
     as: 'router-link',
   },
   {
@@ -30,7 +36,7 @@ const ACTIONS = [
       v-for="(item, index) in ACTIONS"
       :key="index"
       :label="item.label"
-      :variant="item.variant"
+      :variant="item.variant || undefined"
       :to="item.link"
       :as="item.as"
       class="w-1/2"
