@@ -7,7 +7,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Auth: typeof import('./src/components/layouts/auth.vue')['default']
     Button: typeof import('primevue/button')['default']
+    Default: typeof import('./src/components/layouts/Default.vue')['default']
+    Game: typeof import('./src/components/layouts/Game.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']

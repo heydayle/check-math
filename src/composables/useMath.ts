@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 interface IQuiz {
-  num1: number, num2: number, correct?: boolean
+  num1: number, num2: number, correct: boolean
 }
 export const useMath = () => {
-  const userRequest = ref([])
+  const userRequest = ref<IQuiz[]>([])
   const currentQuiz = ref<IQuiz>({ num1: 0, num2: 0, correct: false })
   const isQuizActive = ref(false)
   const timeLeft = ref(0)
@@ -20,6 +20,7 @@ export const useMath = () => {
     return {
       num1,
       num2,
+      correct: false
     };
   }
   const checkAnswer = (quiz: IQuiz, symbol: string) => {
@@ -31,7 +32,7 @@ export const useMath = () => {
     userRequest.value.push(currentQuiz.value)
     currentQuiz.value = generateQuiz();
   }
-  let timer = null;
+  let timer: number = 0;
   const startTimer = () => {
     timer = setInterval(() => {
       timeLeft.value--;

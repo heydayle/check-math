@@ -1,6 +1,6 @@
 const authRouter = [
   {
-    path: '/sign-in',
+    path: 'sign-in',
     name: 'Sign in',
     component: () => import('@/views/auth/SignIn.vue')
   }
