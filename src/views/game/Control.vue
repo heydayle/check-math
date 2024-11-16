@@ -41,9 +41,9 @@ const onRequest = (symbol: string) => {
         <span>{{ currentQuiz.num1 }}</span> <span>[{{currentSymbol}}]</span> <span>{{ currentQuiz.num2 }}</span>
       </div>
       <div class="space-x-2 mt-4">
-        <Button label="<" @click="onRequest('<')" />
-        <Button severity="contrast" label="=" @click="onRequest('=')" />
-        <Button label=">" @click="onRequest('>')" />
+        <Button size="large" label="<" @click="onRequest('<')" />
+        <Button size="large" severity="contrast" label="=" @click="onRequest('=')" />
+        <Button size="large" label=">" @click="onRequest('>')" />
       </div>
     </div>
     <div v-else class="place-content-center">
