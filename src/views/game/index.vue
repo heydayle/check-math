@@ -23,9 +23,9 @@ const onSetGameType = (e: IGameType): void => {
 </script>
 
 <template>
-  <div class="">
-    <div>
-      <div class="w-1/3 m-auto grid grid-cols-1 gap-y-2">
+  <div class="h-full">
+    <div class="h-full sm:w-1/3 m-auto ">
+      <div class="h-full grid grid-cols-1 gap-y-2 place-content-center">
         <template v-if="!gameDifficulty">
           <Button
             v-for="(item, index) in GameDifficulties"

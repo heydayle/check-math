@@ -46,6 +46,7 @@ const onRequest = (symbol: string) => {
     </div>
     <div v-else class="place-content-center">
       <p class="text-2xl">You correct <span class="font-bold text-primary">{{ corrects }}</span> of {{ total }} in {{ minutes }} minutes</p>
+      <Button as="router-link" label="Again" icon="pi pi-replay" variant="text" to="/game" />
     </div>
   </div>
 </template>
