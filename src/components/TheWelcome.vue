@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import axios from 'axios'
+
 interface IAction {
   label: string
   action: () => void
