@@ -5,6 +5,7 @@ interface IQuiz {
 export const useMath = () => {
   const userRequest = ref<IQuiz[]>([])
   const currentQuiz = ref<IQuiz>({ num1: 0, num2: 0, correct: false })
+  const currentSymbol = ref<string | null>(null)
   const isQuizActive = ref(false)
   const timeLeft = ref(0)
   const duration = ref(0)
@@ -16,6 +17,7 @@ export const useMath = () => {
   const generateQuiz = () => {
     const num1 = getRandomNumber()
     const num2 = getRandomNumber()
+    currentSymbol.value = null
 
     return {
       num1,
@@ -62,6 +64,7 @@ export const useMath = () => {
     startQuiz,
     endQuiz,
     startTimer,
-    checkAnswer
+    checkAnswer,
+    currentSymbol,
   }
 }

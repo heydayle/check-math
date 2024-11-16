@@ -7,7 +7,17 @@ const defaultRouter = [
   {
     path: 'game',
     name: 'Game',
-    component: () => import('@/views/game/index.vue')
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/game/index.vue'),
+      },
+      {
+        path: ':difficulty/:type',
+        name: 'GameControl',
+        component: () => import('@/views/game/Control.vue'),
+      }
+    ]
   },
   {
     path: 'leaderboard',
