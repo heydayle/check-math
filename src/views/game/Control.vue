@@ -14,6 +14,7 @@ const {
   checkAnswer,
   currentSymbol,
   timeLeft,
+  currentDifficulty,
 } = useMath()
 
 const minutes = computed<number>(() => parseInt(route.params.type as string)/60)
@@ -23,12 +24,13 @@ const corrects = computed<number>(() => {
 const total = computed(() => userRequest.value.length)
 onMounted(() => {
   duration.value = parseInt(route.params.type as string)/60
+  currentDifficulty.value = parseInt(route.params.difficulty as string)
   startQuiz()
 })
 
 const onRequest = (symbol: string) => {
   currentSymbol.value = symbol
-  setTimeout(() => checkAnswer(currentQuiz.value, symbol), 600)
+  setTimeout(() => checkAnswer(currentQuiz.value, symbol), 300)
 }
 </script>
 <template>

@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { Difficulties } from '@/constants/game'
 interface IQuiz {
   num1: number, num2: number, correct: boolean
 }
@@ -6,6 +7,7 @@ export const useMath = () => {
   const userRequest = ref<IQuiz[]>([])
   const currentQuiz = ref<IQuiz>({ num1: 0, num2: 0, correct: false })
   const currentSymbol = ref<string | null>(null)
+  const currentDifficulty = ref<number>(1)
   const isQuizActive = ref(false)
   const timeLeft = ref(0)
   const duration = ref(0)
@@ -14,9 +16,19 @@ export const useMath = () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  const generateQuiz = () => {
-    const num1 = getRandomNumber()
-    const num2 = getRandomNumber()
+  const generateQuiz = (difficulty: number) => {
+    const min = difficulty === Difficulties.EASY
+                ? 1
+                : difficulty === Difficulties.NORMAL
+                  ? 101
+                  : 1001
+    const max = difficulty === Difficulties.EASY
+                ? 100
+                : difficulty === Difficulties.NORMAL
+                  ? 1000
+                  : 2000
+    const num1 = getRandomNumber(min, max)
+    const num2 = getRandomNumber(min, max)
     currentSymbol.value = null
 
     return {
@@ -32,7 +44,7 @@ export const useMath = () => {
       (symbol === '<' && num1 < num2) ||
       (symbol === '=' && num1 === num2) as boolean
     userRequest.value.push(currentQuiz.value)
-    currentQuiz.value = generateQuiz();
+    currentQuiz.value = generateQuiz(currentDifficulty.value);
   }
   let timer: number = 0;
   const startTimer = () => {
@@ -52,7 +64,7 @@ export const useMath = () => {
     isQuizActive.value = true;
     timeLeft.value = duration.value * 60;
     userRequest.value = [];
-    currentQuiz.value = generateQuiz();
+    currentQuiz.value = generateQuiz(currentDifficulty.value);
     startTimer();
   }
   return {
@@ -66,5 +78,6 @@ export const useMath = () => {
     startTimer,
     checkAnswer,
     currentSymbol,
+    currentDifficulty,
   }
 }
