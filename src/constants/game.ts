@@ -13,7 +13,7 @@ export const GameDifficulties: IGameDifficulty[] = [
   {
     label: 'Hard',
     value: 3,
-    severity: 'contrast'
+    severity: ''
   }
 ]
 export const Difficulties = {
@@ -34,6 +34,6 @@ export const GameTypes: IGameType[] = [
   {
     label: '5 minutes',
     value: 300,
-    severity: 'contrast'
+    severity: ''
   }
 ]

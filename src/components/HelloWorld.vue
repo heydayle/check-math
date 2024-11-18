@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="greetings">
+  <div class="greetings whitespace-nowrap">
     <h1 class="green">{{ msg }}</h1>
   </div>
 </template>

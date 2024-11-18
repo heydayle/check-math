@@ -4,7 +4,7 @@ import { useToggle, useDark, useLocalStorage } from '@vueuse/core'
 
 const isDark = useLocalStorage('dark', false)
 function toggleDarkMode() {
-  document.documentElement.classList.toggle('app');
+  document.documentElement.classList.toggle('p-dark');
 }
 </script>
 <template>
@@ -16,7 +16,7 @@ function toggleDarkMode() {
           <Button rounded outlined size="small">v0.0.1</Button>
         </li>
         <li>
-          <Button rounded outlined size="small">
+          <Button rounded outlined size="small" as="a" href="https://github.com/heydayle" target="_blank">
             Github <i class="pi pi-arrow-up-right !text-xs"/>
           </Button>
         </li>

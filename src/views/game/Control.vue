@@ -15,6 +15,7 @@ const {
   currentSymbol,
   timeLeft,
   currentDifficulty,
+  nextQuestion,
 } = useMath()
 
 const minutes = computed<number>(() => parseInt(route.params.type as string)/60)
@@ -30,7 +31,7 @@ onMounted(() => {
 
 const onRequest = (symbol: string) => {
   currentSymbol.value = symbol
-  setTimeout(() => checkAnswer(currentQuiz.value, symbol), 300)
+  setTimeout(() => checkAnswer(currentQuiz.value, symbol), 100)
 }
 </script>
 <template>
@@ -38,16 +39,20 @@ const onRequest = (symbol: string) => {
     <div v-if="isQuizActive" class="place-content-center">
       <div> {{ timeLeft }}s</div>
       <div class="font-bold text-3xl">
-        <span>{{ currentQuiz.num1 }}</span> <span>[{{currentSymbol}}]</span> <span>{{ currentQuiz.num2 }}</span>
+        <span>{{ currentQuiz.num1 }}</span>
+        <span v-if="currentSymbol" class="text-red-500"> [{{currentSymbol}}] </span>
+        <span v-else> [<span class="invisible">></span>] </span>
+        <span>{{ currentQuiz.num2 }}</span>
       </div>
       <div class="space-x-2 mt-4">
         <Button size="large" label="<" @click="onRequest('<')" />
         <Button size="large" severity="contrast" label="=" @click="onRequest('=')" />
         <Button size="large" label=">" @click="onRequest('>')" />
       </div>
+      <Button class="mt-4" variant="outlined" @click="nextQuestion()">Next</Button>
     </div>
     <div v-else class="place-content-center">
-      <p class="text-2xl">You correct <span class="font-bold text-primary">{{ corrects }}</span> of {{ total }} in {{ minutes }} minutes</p>
+      <p class="text-2xl">You have <span class="font-bold text-primary">{{ corrects }}</span> correct answers of {{ total }} in {{ minutes }} minutes</p>
       <Button as="router-link" label="Again" icon="pi pi-replay" variant="text" to="/game" />
     </div>
   </div>

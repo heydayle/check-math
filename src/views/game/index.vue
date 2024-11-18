@@ -30,6 +30,7 @@ const onSetGameType = (e: IGameType): void => {
           <Button
             v-for="(item, index) in GameDifficulties"
             :key="index"
+            outlined
             :severity="item.severity"
             @click="onSetDifficulty(item)"
           >
@@ -40,6 +41,7 @@ const onSetGameType = (e: IGameType): void => {
           <Button
             v-for="(item, index) in GameTypes"
             :key="index"
+            outlined
             :severity="item.severity"
             @click="onSetGameType(item)"
           >

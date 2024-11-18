@@ -20,13 +20,13 @@ export const useMath = () => {
     const min = difficulty === Difficulties.EASY
                 ? 1
                 : difficulty === Difficulties.NORMAL
-                  ? 101
-                  : 1001
+                  ? 6801
+                  : 969001
     const max = difficulty === Difficulties.EASY
                 ? 100
                 : difficulty === Difficulties.NORMAL
-                  ? 1000
-                  : 2000
+                  ? 6899
+                  : 969999
     const num1 = getRandomNumber(min, max)
     const num2 = getRandomNumber(min, max)
     currentSymbol.value = null
@@ -59,13 +59,17 @@ export const useMath = () => {
     isQuizActive.value = false;
     clearInterval(timer);
   }
-
   const startQuiz = () => {
     isQuizActive.value = true;
     timeLeft.value = duration.value * 60;
     userRequest.value = [];
     currentQuiz.value = generateQuiz(currentDifficulty.value);
     startTimer();
+  }
+  const nextQuestion = () => {
+    currentQuiz.value.correct = false
+    userRequest.value.push(currentQuiz.value)
+    currentQuiz.value = generateQuiz(currentDifficulty.value);
   }
   return {
     userRequest,
@@ -79,5 +83,6 @@ export const useMath = () => {
     checkAnswer,
     currentSymbol,
     currentDifficulty,
+    nextQuestion,
   }
 }
