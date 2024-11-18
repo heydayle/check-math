@@ -1,5 +1,18 @@
+
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+onMounted(() => {
+// // no scale on Safari
+//   if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+//     window.document.addEventListener('touchmove', function(event) {
+//       event = event?.originalEvent || event;
+//       if(event?.scale !== 1) {
+//         event.preventDefault();
+//       }
+//     }, {passive: false});
+//   }
+// })
 </script>
 
 <template>
