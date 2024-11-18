@@ -9,7 +9,7 @@ function toggleDarkMode() {
 </script>
 <template>
   <div class="z-100 bg-background/75 backdrop-blur border-gray-200 dark:border-gray-800 -mb-px sticky top-0 z-50 lg:mb-0 lg:border-0 p-2 flex justify-between">
-    <div></div>
+    <Button as="router-link" variant="text" to="/" size="small" class="font-bold pt-2" >CHECK.MATH</Button>
     <div>
       <ul class="flex items-center space-x-4">
         <li>

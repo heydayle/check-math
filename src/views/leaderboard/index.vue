@@ -2,7 +2,7 @@
 
 </script>
 <template>
-  <div>
-    index.vue is ready
+  <div class="text-center">
+    <Message>The page is building!</Message>
   </div>
 </template>

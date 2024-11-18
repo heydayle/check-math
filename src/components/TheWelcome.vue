@@ -33,15 +33,17 @@ const ACTIONS: IAction[] = [
 </script>
 
 <template>
-  <div class="flex-1 flex flex-col space-y-4 items-center justify-around">
-    <Button
-      v-for="(item, index) in ACTIONS"
-      :key="index"
-      :label="item.label"
-      :variant="item.variant || undefined"
-      :to="item.link"
-      :as="item.as"
-      class="w-1/2"
-    />
+  <div class="h-full place-content-center">
+    <div class="flex-1 flex flex-col space-y-4 items-center justify-around">
+      <Button
+        v-for="(item, index) in ACTIONS"
+        :key="index"
+        :label="item.label"
+        :variant="item.variant || undefined"
+        :to="item.link"
+        :as="item.as"
+        class="w-1/2"
+      />
+    </div>
   </div>
 </template>
