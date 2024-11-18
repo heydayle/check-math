@@ -10,6 +10,15 @@ import App from './App.vue'
 import router from './router'
 
 const app = createApp(App)
+
+// no scale on Safari
+if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+  window.document.addEventListener('touchmove', e => {
+    if(e?.scale !== 1) {
+      e.preventDefault();
+    }
+  }, {passive: false});
+}
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
