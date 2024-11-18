@@ -18,7 +18,10 @@ const {
   nextQuestion,
 } = useMath()
 
+const seconds = computed<number>(() => parseInt(route.params.type as string))
 const minutes = computed<number>(() => parseInt(route.params.type as string)/60)
+const difficulty = computed<number>(() => parseInt(route.params.difficulty as string))
+
 const corrects = computed<number>(() => {
   return userRequest.value.filter((e => e.correct)).length
 })
@@ -37,22 +40,22 @@ const onRequest = (symbol: string) => {
 <template>
   <div class="h-full text-center m-auto grid grid-cols-1 gap-y-2">
     <div v-if="isQuizActive" class="place-content-center">
-      <div> {{ timeLeft }}s</div>
+      <ProgressBar :value="Math.round(timeLeft/seconds * 100)" class="!h-[8px] mb-4 transition"><span></span></ProgressBar>
       <div class="font-bold text-3xl">
-        <span>{{ currentQuiz.num1 }}</span>
+        <span class="inline-block" :class="{'w-10': difficulty < 2, 'w-32': difficulty > 1, }">{{ currentQuiz.num1 }}</span>
         <span v-if="currentSymbol" class="text-red-500"> [{{currentSymbol}}] </span>
         <span v-else> [<span class="invisible">></span>] </span>
-        <span>{{ currentQuiz.num2 }}</span>
+        <span class="inline-block" :class="{'w-10': difficulty < 2, 'w-32': difficulty > 1}">{{ currentQuiz.num2 }}</span>
       </div>
       <div class="space-x-2 mt-4">
-        <Button size="large" label="<" @click="onRequest('<')" />
-        <Button size="large" severity="contrast" label="=" @click="onRequest('=')" />
-        <Button size="large" label=">" @click="onRequest('>')" />
+        <Button size="large" icon="pi pi-angle-left" @click="onRequest('<')" />
+        <Button size="large" severity="contrast" icon="pi pi-equals" @click="onRequest('=')" />
+        <Button size="large" icon="pi pi-angle-right" @click="onRequest('>')" />
       </div>
-      <Button class="mt-4" variant="outlined" @click="nextQuestion()">Next</Button>
+      <Button class="mt-4" variant="outlined" @click="nextQuestion()"><i class="pi pi-forward"/></Button>
     </div>
     <div v-else class="place-content-center">
-      <p class="text-2xl">You have <span class="font-bold text-primary">{{ corrects }}</span> correct answers of {{ total }} in {{ minutes }} minutes</p>
+      <p class="text-2xl">You have <span class="font-bold text-primary">{{ corrects }}</span> correct answers of {{ total }} in <span class="underline">{{ minutes }} minutes</span></p>
       <div class="space-x-2 mt-4">
         <Button as="router-link" label="Home" icon="pi pi-home" to="/" />
         <Button as="router-link" label="Again" icon="pi pi-replay" variant="text" to="/game" />
