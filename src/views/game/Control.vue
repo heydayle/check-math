@@ -16,6 +16,7 @@ const {
   timeLeft,
   currentDifficulty,
   nextQuestion,
+  hasCheating,
 } = useMath()
 
 const seconds = computed<number>(() => parseInt(route.params.type as string))
@@ -55,11 +56,17 @@ const onRequest = (symbol: string) => {
       <Button class="mt-4" variant="outlined" @click="nextQuestion()"><i class="pi pi-forward"/></Button>
     </div>
     <div v-else class="place-content-center">
-      <p class="text-2xl">You have <span class="font-bold text-primary">{{ corrects }}</span> correct answers of {{ total }} in <span class="underline">{{ minutes }} minutes</span></p>
-      <div class="space-x-2 mt-4">
-        <Button as="router-link" label="Home" icon="pi pi-home" to="/" />
-        <Button as="router-link" label="Again" icon="pi pi-replay" variant="text" to="/game" />
-      </div>
+      <template v-if="hasCheating">
+        <p class="text-2xl text-red-500 uppercase">You are using cheating!</p>
+      </template>
+      <template v-else>
+        <p class="text-2xl">You have <span class="font-bold text-primary">{{ corrects }}</span>/{{ total }} in <span class="underline">{{ minutes }} minutes</span></p>
+        <p class="text-2xl">Ratio <span class="font-bold" :class="Math.round(corrects/total*100) >= 50 ? 'text-primary' : 'text-red-500'">{{ total ? Math.round(corrects/total*100) : 0 }}%</span></p>
+        <div class="space-x-2 mt-4">
+          <Button as="router-link" label="Home" icon="pi pi-home" to="/" />
+          <Button as="router-link" label="Again" icon="pi pi-replay" variant="text" to="/game" />
+        </div>
+      </template>
     </div>
   </div>
 </template>

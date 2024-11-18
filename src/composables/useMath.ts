@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { Difficulties } from '@/constants/game'
+import { useToast } from 'primevue/usetoast'
 interface IQuiz {
   num1: number, num2: number, correct: boolean
 }
@@ -11,7 +12,18 @@ export const useMath = () => {
   const isQuizActive = ref(false)
   const timeLeft = ref(0)
   const duration = ref(0)
+  const lastQuestionTimestamp = ref(Date.now());
+  const hasCheating = ref(false);
 
+  const checkCheatSpeed = () => {
+    const currentTime = Date.now();
+    const timeElapsed = currentTime - lastQuestionTimestamp.value;
+    if (timeElapsed < 50) {
+      return true
+    }
+    lastQuestionTimestamp.value = currentTime;
+    return false
+  };
   const getRandomNumber = (min: number = 1, max: number = 100) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
@@ -37,8 +49,16 @@ export const useMath = () => {
       correct: false
     };
   }
+  // const toast = useToast()
   const checkAnswer = (quiz: IQuiz, symbol: string) => {
     const { num1, num2 } = quiz
+    const isCheating = checkCheatSpeed()
+    if (isCheating) {
+      endQuiz()
+      hasCheating.value = true
+      // return alert('You are using cheating!')
+      // return toast.add({ severity: 'error', summary: 'You are using cheating!'})
+    }
     currentQuiz.value.correct =
       (symbol === '>' && num1 > num2) ||
       (symbol === '<' && num1 < num2) ||
@@ -61,6 +81,7 @@ export const useMath = () => {
   }
   const startQuiz = () => {
     isQuizActive.value = true;
+    hasCheating.value = false;
     timeLeft.value = duration.value * 60;
     userRequest.value = [];
     currentQuiz.value = generateQuiz(currentDifficulty.value);
@@ -84,5 +105,6 @@ export const useMath = () => {
     currentSymbol,
     currentDifficulty,
     nextQuestion,
+    hasCheating,
   }
 }
