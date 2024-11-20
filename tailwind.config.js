@@ -5,15 +5,15 @@ export default {
   theme: {
     extend: {
       animation: {
-        'beat-spin': 'beat-spin 2s infinite',
+        'beat-spin': 'beat-spin 5s infinite',
       },
       keyframes: {
         'beat-spin': {
-          '0%, 100%': { transform: 'scale(1) rotate(0deg)', opacity: 1 },
+          '0%, 20%': { transform: 'scale(1) rotate(0deg)', opacity: 1 },
           '10%': { transform: 'scale(1.2)', opacity: 0.8 },
-          '20%': { transform: 'scale(1)', opacity: 1.2 },
+          '20%': { transform: 'scale(1)', opacity: 1 },
           '30%': { transform: 'scale(1.2)', opacity: 0.8 },
-          '40%': { transform: 'scale(1)', opacity: 1.2 },
+          '40%': { transform: 'scale(1)', opacity: 1 },
           '50%': { transform: 'scale(1) rotate(180deg)', opacity: 1 },
           '100%': { transform: 'scale(1) rotate(360deg)', opacity: 1 },
         },

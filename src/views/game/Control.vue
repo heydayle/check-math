@@ -78,9 +78,9 @@ watch([currentQuiz, difficulty], drawNumbers)
         <canvas ref="canvasRef" class="w-full h-[250px] bg-transparent"></canvas>
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2">
           <div v-if="currentSymbol" class="text-primary"> [{{ currentSymbol }}] </div>
-          <div v-else> [<span class="invisible">></span>] </div>
+          <div v-else class="text-white"> [<span class="invisible">></span>] </div>
         </div>
-        <div class="absolute bottom-0 w-full h-10 bg-[#121212] -z-10" />
+        <div class="absolute -bottom-1.5 w-full h-12 bg-[#121212] -z-10 rounded-lg" />
       </div>
       <div class="space-x-2 mt-8">
         <Button size="large" icon="pi pi-angle-left" @click="onRequest('<')" />
