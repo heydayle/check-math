@@ -1,11 +1,15 @@
 <script setup lang="ts">
-// import {} from '@vueuse'
-import { useToggle, useDark, useLocalStorage } from '@vueuse/core'
+import { useLayout } from '@/composables/useLayout'
+import { onMounted } from 'vue'
 
-const isDark = useLocalStorage('dark', false)
-function toggleDarkMode() {
-  document.documentElement.classList.toggle('p-dark')
-}
+const { isDarkTheme, toggleDarkMode, executeDarkModeAuto } = useLayout()
+
+onMounted(() => {
+  if (isDarkTheme.value) {
+    executeDarkModeAuto()
+  }
+})
+
 </script>
 <template>
   <div
@@ -32,7 +36,7 @@ function toggleDarkMode() {
           </Button>
         </li>
         <li>
-          <ToggleSwitch class="inline-block mt-1" v-model="isDark" @change="toggleDarkMode()">
+          <ToggleSwitch class="inline-block mt-1" v-model="isDarkTheme" @change="toggleDarkMode()">
             <template #handle="{ checked }">
               <i :class="['!text-xs pi', { 'pi-moon': checked, 'pi-sun': !checked }]" />
             </template>
