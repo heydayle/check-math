@@ -10,10 +10,12 @@ export const useMath = () => {
   const currentSymbol = ref<string | null>(null)
   const currentDifficulty = ref<number>(1)
   const isQuizActive = ref(false)
+  const score = ref(0)
   const timeLeft = ref(0)
   const duration = ref(0)
   const lastQuestionTimestamp = ref(Date.now());
   const hasCheating = ref(false);
+  let timer: number = 0;
 
   const checkCheatSpeed = () => {
     const currentTime = Date.now();
@@ -27,7 +29,6 @@ export const useMath = () => {
   const getRandomNumber = (min: number = 1, max: number = 100) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-
   const generateQuiz = (difficulty: number) => {
     const min = difficulty === Difficulties.EASY
                 ? 1
@@ -49,15 +50,26 @@ export const useMath = () => {
       correct: false
     };
   }
-  // const toast = useToast()
+  const calculateScore = () => {
+    const totalQuestionsAnswered = userRequest.value.length
+    const totalCorrectAnswers = userRequest.value.filter((quiz) => quiz.correct).length
+    const totalIncorrectAnswers = totalQuestionsAnswered - totalCorrectAnswers
+
+    const totalTime = duration.value * 60
+    const delta = totalQuestionsAnswered / totalTime
+    const petal = totalCorrectAnswers / totalTime
+    const leafDown = totalIncorrectAnswers * 100
+    const ratio = (totalCorrectAnswers * 100) - leafDown
+
+    const value = (delta * 2) + (petal * 10) + ratio
+    return value < 1 ? 0 : Number(Math.round(value).toFixed(0))
+  }
   const checkAnswer = (quiz: IQuiz, symbol: string) => {
     const { num1, num2 } = quiz
     const isCheating = checkCheatSpeed()
     if (isCheating) {
       endQuiz()
       hasCheating.value = true
-      // return alert('You are using cheating!')
-      // return toast.add({ severity: 'error', summary: 'You are using cheating!'})
     }
     currentQuiz.value.correct =
       (symbol === '>' && num1 > num2) ||
@@ -66,7 +78,6 @@ export const useMath = () => {
     userRequest.value.push(currentQuiz.value)
     currentQuiz.value = generateQuiz(currentDifficulty.value);
   }
-  let timer: number = 0;
   const startTimer = () => {
     timer = setInterval(() => {
       timeLeft.value--;
@@ -77,6 +88,7 @@ export const useMath = () => {
   }
   const endQuiz = () => {
     isQuizActive.value = false;
+    score.value = calculateScore();
     clearInterval(timer);
   }
   const startQuiz = () => {
@@ -106,5 +118,6 @@ export const useMath = () => {
     currentDifficulty,
     nextQuestion,
     hasCheating,
+    score,
   }
 }
