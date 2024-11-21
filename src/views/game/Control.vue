@@ -87,9 +87,9 @@ watch([currentQuiz, difficulty], drawNumbers)
         <Button size="large" severity="contrast" icon="pi pi-equals" @click="onRequest('=')" />
         <Button size="large" icon="pi pi-angle-right" @click="onRequest('>')" />
       </div>
-      <div class="mt-8">
-        <Button as="router-link" size="small" variant="outlined" label="Home" icon="pi pi-home" to="/" class="mr-2" />
-        <Button class="mt-4" variant="outlined" @click="nextQuestion()"><i class="pi pi-forward"/></Button>
+      <div class="fixed bottom-10 left-1/2 -translate-x-1/2">
+        <Button as="router-link" size="small" variant="outlined" icon="pi pi-home" to="/" class="mr-2" />
+        <Button class="mt-4" size="small" variant="outlined" icon="pi pi-forward" @click="nextQuestion()"/>
       </div>
     </div>
     <div v-else class="place-content-center">
@@ -102,9 +102,9 @@ watch([currentQuiz, difficulty], drawNumbers)
           <span class="underline">{{ seconds < 60 ? `${seconds} seconds` : `${minutes} minutes` }} </span>
         </p>
         <p class="text-2xl">Percentage <span class="font-bold" :class="Math.round(corrects/total*100) >= 50 ? 'text-primary' : 'text-red-500'">{{ total ? Math.round(corrects/total*100) : 0 }}%</span></p>
-        <div class="space-x-2 mt-4">
-          <Button as="router-link" label="Home" icon="pi pi-home" to="/" />
-          <Button as="router-link" label="Again" icon="pi pi-replay" variant="text" to="/game" />
+        <div class="space-x-2 mt-20 pt-10">
+          <Button as="router-link" icon="pi pi-home" to="/" />
+          <Button as="router-link" icon="pi pi-replay" variant="text" to="/game" />
         </div>
       </template>
     </div>
