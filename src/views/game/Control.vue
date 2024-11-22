@@ -2,6 +2,7 @@
 import { useRoute } from 'vue-router'
 import { useMath } from '@/composables/useMath'
 import { computed, onMounted, ref, watch } from 'vue'
+import Summary from '@/components/game/Summary.vue'
 
 const route = useRoute()
 
@@ -29,6 +30,14 @@ const corrects = computed<number>(() => {
   return userRequest.value.filter((e) => e.correct).length
 })
 const total = computed(() => userRequest.value.length)
+const summary = computed(() => {
+  return [
+    { key: 'Answers', value: total.value },
+    { key: 'Corrects', value: corrects.value },
+    { key: 'Time', value: seconds.value < 60 ? `${seconds.value}s` : `${minutes.value}m` },
+    { key: 'Score', value: score.value },
+  ]
+})
 onMounted(() => {
   duration.value = parseInt(route.params.type as string) / 60
   currentDifficulty.value = parseInt(route.params.difficulty as string)
@@ -116,20 +125,7 @@ watch([currentQuiz, difficulty], drawNumbers)
         <p class="text-2xl text-red-500 uppercase">You are using cheating!</p>
       </template>
       <template v-else>
-        <p class="text-2xl">
-          You have <span class="font-bold text-primary">{{ corrects }}</span
-          >/{{ total }} in
-          <span class="underline"
-            >{{ seconds < 60 ? `${seconds} seconds` : `${minutes} minutes` }}
-          </span>
-        </p>
-        <p class="text-2xl">
-          Score:
-          <span
-            class="font-bold text-primary"
-            >{{ score }}</span
-          >
-        </p>
+        <Summary :summary="summary" />
         <div class="space-x-2 mt-20 pt-20">
           <Button as="router-link" icon="pi pi-home" to="/" />
           <Button as="router-link" icon="pi pi-replay" variant="text" to="/game" />
