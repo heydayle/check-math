@@ -21,6 +21,11 @@ export const Difficulties = {
   NORMAL: 2,
   HARD: 3,
 }
+export const DifficultiesByValue = [
+  'Easy',
+  'Normal',
+  'Hard',
+]
 export const GameTypes: IGameType[] = [
   {
     label: '1 minute',

@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import { useMath } from '@/composables/useMath'
 import { computed, onMounted, ref, watch } from 'vue'
 import Summary from '@/components/game/Summary.vue'
+import { DifficultiesByValue } from '@/constants/game'
 
 const route = useRoute()
 
@@ -30,10 +31,12 @@ const corrects = computed<number>(() => {
   return userRequest.value.filter((e) => e.correct).length
 })
 const total = computed(() => userRequest.value.length)
+const difficultName = computed(() => DifficultiesByValue[difficulty.value - 1])
 const summary = computed(() => {
   return [
     { key: 'Answers', value: total.value },
-    { key: 'Corrects', value: corrects.value },
+    { key: 'Correct', value: corrects.value },
+    { key: 'Difficulty', value: difficultName.value },
     { key: 'Time', value: seconds.value < 60 ? `${seconds.value}s` : `${minutes.value}m` },
     { key: 'Score', value: score.value },
   ]
