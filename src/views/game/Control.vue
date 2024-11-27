@@ -4,6 +4,7 @@ import { useMath } from '@/composables/useMath'
 import { computed, onMounted, ref, watch } from 'vue'
 import Summary from '@/components/game/Summary.vue'
 import { DifficultiesByValue } from '@/constants/game'
+import { useWindowSize } from '@vueuse/core'
 
 const route = useRoute()
 
@@ -21,7 +22,7 @@ const {
   hasCheating,
   score,
 } = useMath()
-
+const { width } = useWindowSize()
 const seconds = computed<number>(() => parseInt(route.params.type as string))
 const minutes = computed<number>(() => parseInt(route.params.type as string) / 60)
 const difficulty = computed<number>(() => parseInt(route.params.difficulty as string))
@@ -68,7 +69,7 @@ const drawNumbers = () => {
       ctx.font = difficulty.value > 2 ? `24px Arial` : `36px Arial`
       ctx.fillStyle = 'white'
 
-      const isMobile = canvas.width / dpr < 500;
+      const isMobile = width.value < 500 && difficulty.value > 1
 
       if (isMobile) {
         // Xuống dòng: Vẽ mỗi biểu thức trên dòng riêng
@@ -108,7 +109,7 @@ watch([currentQuiz, difficulty], drawNumbers)
     <div v-if="isQuizActive" class="place-content-center">
       <ProgressBar
         :value="Math.round((timeLeft / seconds) * 100)"
-        class="!h-[8px] w-80 m-auto mb-8 transition"
+        class="!h-[8px] w-80 m-auto mb-4 transition"
         ><span></span
       ></ProgressBar>
       <div class="relative font-bold text-3xl m-auto" :class="difficulty > 1 ? 'w-full': 'w-80'">
@@ -117,7 +118,7 @@ watch([currentQuiz, difficulty], drawNumbers)
           <div v-if="currentSymbol" class="text-primary">{{ currentSymbol }}</div>
           <div v-else class="text-white"><span class="invisible">></span></div>
         </div>
-        <div class="absolute -bottom-2.5 w-full h-12 bg-[#121212] -z-10 rounded-lg" />
+        <div class="absolute bottom-12 w-full h-28 bg-[#121212] -z-10 rounded-lg" />
       </div>
       <div class="space-x-2 mt-10">
         <Button size="large" icon="pi pi-angle-left" @click="onRequest('<')" />
