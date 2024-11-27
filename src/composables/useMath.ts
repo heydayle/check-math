@@ -64,6 +64,11 @@ export const useMath = () => {
     return { expression, value }
   }
 
+  const endByCheat = () => {
+    hasCheating.value = true
+    isQuizActive.value = false
+  }
+
   const generateQuiz = (difficulty: number): IQuiz => {
     const min =
       difficulty === Difficulties.EASY ? 1 : difficulty === Difficulties.NORMAL ? 6801 : 969001
@@ -110,8 +115,7 @@ export const useMath = () => {
       endQuiz()
       hasCheating.value = true
     }
-    currentQuiz.value.correct =
-      (symbol === result)
+    currentQuiz.value.correct = (symbol === result)
     userRequest.value.push(currentQuiz.value)
     currentQuiz.value = generateQuiz(currentDifficulty.value)
   }
@@ -155,6 +159,7 @@ export const useMath = () => {
     currentDifficulty,
     nextQuestion,
     hasCheating,
+    endByCheat,
     score,
   }
 }

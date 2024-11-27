@@ -21,6 +21,7 @@ const {
   nextQuestion,
   hasCheating,
   score,
+  endByCheat,
 } = useMath()
 const { width } = useWindowSize()
 const seconds = computed<number>(() => parseInt(route.params.type as string))
@@ -46,7 +47,21 @@ onMounted(() => {
   duration.value = parseInt(route.params.type as string) / 60
   currentDifficulty.value = parseInt(route.params.difficulty as string)
   startQuiz()
+
   document.startViewTransition(() => drawNumbers())
+  document.addEventListener('pointerdown', () => {
+    hasCheating.value = false
+  })
+  document.addEventListener('mousedown', () => {
+    if (hasCheating.value) {
+      endByCheat()
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.isTrusted) {
+      endByCheat()
+    }
+  });
 })
 
 const onRequest = (symbol: string) => {
@@ -56,7 +71,8 @@ const onRequest = (symbol: string) => {
 
 const drawNumbers = () => {
   const canvas = canvasRef.value
-  if (canvas) {
+
+  if (canvas && !hasCheating.value) {
     const ctx = canvas.getContext('2d')
     if (ctx) {
       const dpr = window.devicePixelRatio || 1
@@ -70,6 +86,7 @@ const drawNumbers = () => {
       ctx.fillStyle = 'white'
 
       const isMobile = width.value < 500 && difficulty.value > 1
+      Object.freeze(CanvasRenderingContext2D.prototype);
 
       if (isMobile) {
         // Xuống dòng: Vẽ mỗi biểu thức trên dòng riêng
