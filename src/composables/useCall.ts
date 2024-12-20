@@ -4,7 +4,7 @@ import axios from 'axios';
 export const useCall = () => {
   // Create an Axios instance
   const defaultOptions = {}
-  console.log(import.meta.env)
+
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL_API,
     ...defaultOptions,
