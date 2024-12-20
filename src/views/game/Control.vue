@@ -22,6 +22,7 @@ const {
   hasCheating,
   score,
   endByCheat,
+  loading,
 } = useMath()
 const { width } = useWindowSize()
 const seconds = computed<number>(() => parseInt(route.params.type as string))
@@ -85,19 +86,19 @@ const drawNumbers = () => {
       ctx.font = difficulty.value > 2 ? `24px Arial` : `36px Arial`
       ctx.fillStyle = 'white'
 
-      const isMobile = width.value < 500 && difficulty.value > 1
+      const isMobile = width.value < 500 && difficulty.value > 2
       Object.freeze(CanvasRenderingContext2D.prototype);
 
       if (isMobile) {
         // Xuống dòng: Vẽ mỗi biểu thức trên dòng riêng
         ctx.textAlign = 'center';
         ctx.fillText(
-          currentQuiz.value.expression1.expression.toString(),
+          currentQuiz.value.expression1.toString(),
           canvas.width / 2 / dpr, // Canh giữa
           canvas.height / 3 / dpr // Vẽ trên 1/3 chiều cao canvas
         );
         ctx.fillText(
-          currentQuiz.value.expression2.expression.toString(),
+          currentQuiz.value.expression2.toString(),
           canvas.width / 2 / dpr, // Canh giữa
           (canvas.height / 3) * 2 / dpr // Vẽ ở 2/3 chiều cao canvas
         );
@@ -105,12 +106,12 @@ const drawNumbers = () => {
         // Vẽ thông thường: hai biểu thức trên cùng một dòng
         ctx.textAlign = 'center';
         ctx.fillText(
-          currentQuiz.value.expression1.expression.toString(),
+          currentQuiz.value.expression1.toString(),
           canvas.width / 4 / dpr,
           canvas.height / 2 / dpr
         );
         ctx.fillText(
-          currentQuiz.value.expression2.expression.toString(),
+          currentQuiz.value.expression2.toString(),
           ((canvas.width / 4) * 3) / dpr,
           canvas.height / 2 / dpr
         );
@@ -137,10 +138,10 @@ watch([currentQuiz, difficulty], drawNumbers)
         </div>
         <div class="absolute bottom-12 w-full h-28 bg-[#121212] -z-10 rounded-lg" />
       </div>
-      <div class="space-x-2 mt-10">
-        <Button size="large" icon="pi pi-angle-left" @click="onRequest('<')" />
-        <Button size="large" severity="contrast" icon="pi pi-equals" @click="onRequest('=')" />
-        <Button size="large" icon="pi pi-angle-right" @click="onRequest('>')" />
+      <div class="space-x-2 mt-10 flex">
+        <Button :disabled="loading" size="large" icon="pi pi-angle-left" class="flex-1 inline-block" @click="onRequest('<')" />
+        <Button :disabled="loading" size="large" severity="contrast" icon="pi pi-equals" class="flex-1 inline-block" @click="onRequest('=')" />
+        <Button :disabled="loading" size="large" icon="pi pi-angle-right" class="flex-1 inline-block" @click="onRequest('>')" />
       </div>
       <div class="fixed bottom-10 left-1/2 -translate-x-1/2">
         <Button

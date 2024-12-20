@@ -9,14 +9,12 @@ interface IExpression {
 interface IQuiz {
   expression1: number | string
   expression2: number | string
-  result: '>' | '<' | '='
   correct: boolean
 }
 const TEMP_QUIZ: IQuiz = {
   expression1: 0,
   expression2: 0,
   correct: false,
-  result: '='
 }
 export const useMath = () => {
   const userRequest = ref<IQuiz[]>([])
@@ -30,6 +28,7 @@ export const useMath = () => {
   const lastQuestionTimestamp = ref(Date.now());
   const hasCheating = ref(false);
   let timer: number = 0;
+  const loading = ref<boolean>(false)
   const api= useCall()
 
   const checkCheatSpeed = () => {
@@ -66,7 +65,7 @@ export const useMath = () => {
     isQuizActive.value = false
   }
 
-  const generateQuiz = async (difficulty: number): IQuiz => {
+  const generateQuiz = async (difficulty: number): Promise<IQuiz> => {
     const min =
       difficulty === Difficulties.EASY ? 1 : difficulty === Difficulties.NORMAL ? 6801 : 969001
     const max =
@@ -93,7 +92,6 @@ export const useMath = () => {
     return {
       expression1: response.data.value.expression1,
       expression2: response.data.value.expression2,
-      result: getResultByExpression(expr1.value, expr2.value),
       correct: false,
     }
   }
@@ -111,24 +109,25 @@ export const useMath = () => {
     const value = delta * 2 + petal * 10 + ratio
     return value < 1 ? 0 : Number(Math.round(value).toFixed(0))
   }
-  const checkAnswer = (quiz: IQuiz, symbol: string) => {
-    const { expression1, expression2, result } = quiz
+  const checkAnswer = async (quiz: IQuiz, operator: string) => {
+    const { expression1, expression2 } = quiz
     const isCheating = checkCheatSpeed()
     if (isCheating) {
       endQuiz()
       hasCheating.value = true
     }
-    currentQuiz.value.correct = (symbol === result)
+    loading.value = true
     const body = {
       expression1,
       expression2,
-      operator: symbol
+      operator
     }
     const response = await api.post(APIMath.compare, body)
 
     currentQuiz.value.correct = response.data.value.isValid
     userRequest.value.push(currentQuiz.value)
     currentQuiz.value = await generateQuiz(currentDifficulty.value);
+    loading.value = false
   }
   const startTimer = () => {
     timer = setInterval(() => {
@@ -143,12 +142,12 @@ export const useMath = () => {
     score.value = calculateScore()
     clearInterval(timer)
   }
-  const startQuiz = () => {
+  const startQuiz = async () => {
     isQuizActive.value = true
     hasCheating.value = false
     timeLeft.value = duration.value * 60
     userRequest.value = []
-    currentQuiz.value = generateQuiz(currentDifficulty.value)
+    currentQuiz.value = await generateQuiz(currentDifficulty.value)
     startTimer()
   }
   const nextQuestion = async () => {
@@ -172,5 +171,6 @@ export const useMath = () => {
     hasCheating,
     endByCheat,
     score,
+    loading,
   }
 }
