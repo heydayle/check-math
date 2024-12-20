@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { Difficulties } from '@/constants/game'
-import { useToast } from 'primevue/usetoast'
+import { useCall } from '@/composables/useCall'
+import APIMath from '@/api/math'
 interface IQuiz {
   num1: number, num2: number, correct: boolean
 }
@@ -16,6 +17,7 @@ export const useMath = () => {
   const lastQuestionTimestamp = ref(Date.now());
   const hasCheating = ref(false);
   let timer: number = 0;
+  const api= useCall()
 
   const checkCheatSpeed = () => {
     const currentTime = Date.now();
@@ -29,7 +31,7 @@ export const useMath = () => {
   const getRandomNumber = (min: number = 1, max: number = 100) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  const generateQuiz = (difficulty: number) => {
+  const generateQuiz = async (difficulty: number) => {
     const min = difficulty === Difficulties.EASY
                 ? 1
                 : difficulty === Difficulties.NORMAL
@@ -40,12 +42,17 @@ export const useMath = () => {
                 : difficulty === Difficulties.NORMAL
                   ? 6899
                   : 969999
-    const num1 = getRandomNumber(min, max)
-    const num2 = getRandomNumber(min, max)
     currentSymbol.value = null
 
+    const params = {
+      difficulty
+    }
+    const response = await api.get(APIMath.generate, { params })
+    const num1 = response.data.value.expression1
+    const num2 = response.data.value.expression2
+
     return {
-      num1,
+      num1  ,
       num2,
       correct: false
     };
@@ -64,19 +71,23 @@ export const useMath = () => {
     const value = (delta * 2) + (petal * 10) + ratio
     return value < 1 ? 0 : Number(Math.round(value).toFixed(0))
   }
-  const checkAnswer = (quiz: IQuiz, symbol: string) => {
+  const checkAnswer = async (quiz: IQuiz, symbol: string) => {
     const { num1, num2 } = quiz
     const isCheating = checkCheatSpeed()
     if (isCheating) {
       endQuiz()
       hasCheating.value = true
     }
-    currentQuiz.value.correct =
-      (symbol === '>' && num1 > num2) ||
-      (symbol === '<' && num1 < num2) ||
-      (symbol === '=' && num1 === num2) as boolean
+    const body = {
+      expression1: num1,
+      expression2: num2,
+      operator: symbol
+    }
+    const response = await api.post(APIMath.compare, body)
+
+    currentQuiz.value.correct = response.data.value.isValid
     userRequest.value.push(currentQuiz.value)
-    currentQuiz.value = generateQuiz(currentDifficulty.value);
+    currentQuiz.value = await generateQuiz(currentDifficulty.value);
   }
   const startTimer = () => {
     timer = setInterval(() => {
@@ -91,18 +102,18 @@ export const useMath = () => {
     score.value = calculateScore();
     clearInterval(timer);
   }
-  const startQuiz = () => {
+  const startQuiz = async () => {
     isQuizActive.value = true;
     hasCheating.value = false;
     timeLeft.value = duration.value * 60;
     userRequest.value = [];
-    currentQuiz.value = generateQuiz(currentDifficulty.value);
+    currentQuiz.value = await generateQuiz(currentDifficulty.value);
     startTimer();
   }
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     currentQuiz.value.correct = false
     userRequest.value.push(currentQuiz.value)
-    currentQuiz.value = generateQuiz(currentDifficulty.value);
+    currentQuiz.value = await generateQuiz(currentDifficulty.value);
   }
   return {
     userRequest,
