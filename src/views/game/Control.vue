@@ -4,6 +4,7 @@ import { useMath } from '@/composables/useMath'
 import { computed, onMounted, ref, watch } from 'vue'
 import Summary from '@/components/game/Summary.vue'
 import { DifficultiesByValue } from '@/constants/game'
+import { useWindowSize } from '@vueuse/core'
 
 const route = useRoute()
 
@@ -20,8 +21,9 @@ const {
   nextQuestion,
   hasCheating,
   score,
+  endByCheat,
 } = useMath()
-
+const { width } = useWindowSize()
 const seconds = computed<number>(() => parseInt(route.params.type as string))
 const minutes = computed<number>(() => parseInt(route.params.type as string) / 60)
 const difficulty = computed<number>(() => parseInt(route.params.difficulty as string))
@@ -45,7 +47,21 @@ onMounted(() => {
   duration.value = parseInt(route.params.type as string) / 60
   currentDifficulty.value = parseInt(route.params.difficulty as string)
   startQuiz()
+
   document.startViewTransition(() => drawNumbers())
+  document.addEventListener('pointerdown', () => {
+    hasCheating.value = false
+  })
+  document.addEventListener('mousedown', () => {
+    if (hasCheating.value) {
+      endByCheat()
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.isTrusted) {
+      endByCheat()
+    }
+  });
 })
 
 const onRequest = (symbol: string) => {
@@ -55,7 +71,8 @@ const onRequest = (symbol: string) => {
 
 const drawNumbers = () => {
   const canvas = canvasRef.value
-  if (canvas) {
+
+  if (canvas && !hasCheating.value) {
     const ctx = canvas.getContext('2d')
     if (ctx) {
       const dpr = window.devicePixelRatio || 1
@@ -65,19 +82,39 @@ const drawNumbers = () => {
       ctx.scale(dpr, dpr)
       // Reset canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.font = `36px Arial`
+      ctx.font = difficulty.value > 2 ? `24px Arial` : `36px Arial`
       ctx.fillStyle = 'white'
 
-      // Draw num1
-      ctx.textAlign = 'center'
-      ctx.fillText(currentQuiz.value.num1.toString(), canvas.width / 4 / dpr, canvas.height / dpr)
+      const isMobile = width.value < 500 && difficulty.value > 1
+      Object.freeze(CanvasRenderingContext2D.prototype);
 
-      // Draw num2
-      ctx.fillText(
-        currentQuiz.value.num2.toString(),
-        ((canvas.width / 4) * 3) / dpr,
-        canvas.height / dpr,
-      )
+      if (isMobile) {
+        // Xuống dòng: Vẽ mỗi biểu thức trên dòng riêng
+        ctx.textAlign = 'center';
+        ctx.fillText(
+          currentQuiz.value.expression1.expression.toString(),
+          canvas.width / 2 / dpr, // Canh giữa
+          canvas.height / 3 / dpr // Vẽ trên 1/3 chiều cao canvas
+        );
+        ctx.fillText(
+          currentQuiz.value.expression2.expression.toString(),
+          canvas.width / 2 / dpr, // Canh giữa
+          (canvas.height / 3) * 2 / dpr // Vẽ ở 2/3 chiều cao canvas
+        );
+      } else {
+        // Vẽ thông thường: hai biểu thức trên cùng một dòng
+        ctx.textAlign = 'center';
+        ctx.fillText(
+          currentQuiz.value.expression1.expression.toString(),
+          canvas.width / 4 / dpr,
+          canvas.height / 2 / dpr
+        );
+        ctx.fillText(
+          currentQuiz.value.expression2.expression.toString(),
+          ((canvas.width / 4) * 3) / dpr,
+          canvas.height / 2 / dpr
+        );
+      }
     }
   }
 }
@@ -89,18 +126,18 @@ watch([currentQuiz, difficulty], drawNumbers)
     <div v-if="isQuizActive" class="place-content-center">
       <ProgressBar
         :value="Math.round((timeLeft / seconds) * 100)"
-        class="!h-[8px] w-80 m-auto -mb-[190px] transition"
+        class="!h-[8px] w-80 m-auto mb-4 transition"
         ><span></span
       ></ProgressBar>
-      <div class="relative font-bold text-3xl w-80 m-auto">
-        <canvas ref="canvasRef" class="w-full h-[290px] bg-transparent"></canvas>
-        <div class="absolute -bottom-1 left-1/2 -translate-x-1/2">
+      <div class="relative font-bold text-3xl m-auto" :class="difficulty > 1 ? 'w-full': 'w-80'">
+        <canvas ref="canvasRef" class="w-full -mb-20 h-[190px] xs:h-[50px] bg-transparent"></canvas>
+        <div class="absolute bottom-[90px] xs:bottom-5 left-1/2 -translate-x-1/2 z-10">
           <div v-if="currentSymbol" class="text-primary">{{ currentSymbol }}</div>
           <div v-else class="text-white"><span class="invisible">></span></div>
         </div>
-        <div class="absolute -bottom-2.5 w-full h-12 bg-[#121212] -z-10 rounded-lg" />
+        <div class="absolute bottom-12 w-full h-28 bg-[#121212] -z-10 rounded-lg" />
       </div>
-      <div class="space-x-2 mt-8">
+      <div class="space-x-2 mt-10">
         <Button size="large" icon="pi pi-angle-left" @click="onRequest('<')" />
         <Button size="large" severity="contrast" icon="pi pi-equals" @click="onRequest('=')" />
         <Button size="large" icon="pi pi-angle-right" @click="onRequest('>')" />
