@@ -1,7 +1,8 @@
-import { ref } from 'vue'
+import { type Ref, ref } from 'vue'
 import { Difficulties } from '@/constants/game'
 import { useCall } from '@/composables/useCall'
 import APIMath from '@/api/math'
+import type { AxiosResponse } from 'axios'
 interface IExpression {
   value: number
   expression: string
@@ -86,7 +87,7 @@ export const useMath = () => {
     const params = {
       difficulty
     }
-    const response = await api.get(APIMath.generate, { params })
+    const response = await api.get(APIMath.generate, { params }) as AxiosResponse
 
 
     return {
@@ -122,7 +123,7 @@ export const useMath = () => {
       expression2,
       operator
     }
-    const response = await api.post(APIMath.compare, body)
+    const response = await api.post(APIMath.compare, body) as AxiosResponse
 
     currentQuiz.value.correct = response.data.value.isValid
     userRequest.value.push(currentQuiz.value)
